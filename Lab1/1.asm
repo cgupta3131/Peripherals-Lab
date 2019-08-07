@@ -91,107 +91,107 @@ DIV8:               ;Basically repeated subtraction is done to perform Divison
         JMP END
 
 ADD16:
-    MVI H,88H
+    MVI H,88H       ;Setting memory Address
     MVI L,01H
-    MOV B,M
+    MOV B,M         ;Storing higher 8 bits of first operand
     INR L
-    MOV C,M
+    MOV C,M         ;Storing lower 8 bits of first operand
     INR L
-    MOV D,M
+    MOV D,M         ;Storing higher 8 bits of second operand
     INR L
-    MOV E,M
+    MOV E,M         ;Storing lower 8 bits of second operand
 
-    MVI H,00H
+    MVI H,00H       ;Initializing register pair to 0000
     MVI L,00H
-    DAD B
-    DAD D
+    DAD B           ;Adding first operand
+    DAD D           ;Adding second operand
 
-    MOV B, H
-    MOV C, L
-    MVI H, 89H
+    MOV B, H        ;Storing higher 8 bits of answer
+    MOV C, L        ;Storing lower 8 bits of answer
+    MVI H, 89H      ;Storing higher 8 bits of answer at memory location 8900
     MVI L, 00H
     MOV M,B
     INR L
-    MOV M,C
+    MOV M,C         ;Storing lower 8 bits of answer at memory location 8901
     JMP END
 
 SUB16:
-    MVI H,88H
+    MVI H,88H       ;Setting memory Address
     MVI L,01H
-    MOV B,M
+    MOV B,M         ;Storing higher 8 bits of first operand
     INR L
-    MOV C,M
+    MOV C,M         ;Storing lower 8 bits of first operand
     INR L
-    MOV D,M
+    MOV D,M         ;Storing higher 8 bits of second operand
     INR L
-    MOV E,M
-
-    MOV A,D
+    MOV E,M         ;Storing lower 8 bits of second operand
+                    ;Now we take 2s complement of second operand
+    MOV A,D         ;Taking complement of lower 8 bits
     CMA
     MOV D,A
 
-    MOV A,E
+    MOV A,E         ;Taking complement of higher 8 bits
     CMA
     MOV E,A
 
-    MVI H,00H
+    MVI H,00H       
     MVI L,01H
-    DAD D
-    DAD B
+    DAD D           ;Adding 1 to get 2's complement
+    DAD B           ;Adding first operand
 
-    MOV B, H
-    MOV C, L
+    MOV B, H        ;Storing higher 8 bits of answer
+    MOV C, L        ;Storing lower 8 bits of answer
     MVI H, 89H
     MVI L, 00H
-    MOV M,B
+    MOV M,B         ;Storing higher 8 bits of answer at memory location 8900
     INR L
-    MOV M,C
+    MOV M,C         ;Storing lower 8 bits of answer at memory location 8901
     JMP END
 
 MUL16:
-    MVI H,88H
+    MVI H,88H       ;Setting memory Address
     MVI L,01H
-    MOV B,M
+    MOV B,M         ;Storing higher 8 bits of first operand
     INR L
-    MOV C,M
-    MOV H,B
+    MOV C,M         ;Storing lower 8 bits of first operand
+    MOV H,B         ;Storing first operand in register pair HL
     MOV L,C
 
-    SPHL
+    SPHL            ;Storing first operand in SP
 
-    MVI H,88H
+    MVI H,88H       ;Setting memory Address
     MVI L,03H
-    MOV B,M
+    MOV B,M         ;Storing higher 8 bits of second operand
     INR L
-    MOV C,M
-    MOV D,B
+    MOV C,M         ;Storing lower 8 bits of second operand
+    MOV D,B         ;Storing first operand in register pair HL
     MOV E,C
 
-    MVI H,00H
+    MVI H,00H       ;Answer is stored in registers BCHL so initializing them to zero
     MVI L,00H
     MVI B,00H
     MVI C,00H
-
+        ;Loop for repeated Addition
     L3:
-        MOV A, D
+        MOV A, D    ;To check whether first operand is zero or not we Or the digits of first operand
         ORA E
 
-        JZ L3E
+        JZ L3E      ;If first operand is zero then break;
 
-        DAD SP
-        JNC L4
+        DAD SP      ;Add second operand
+        JNC L4      ;If There is no carry then skip
 
-        INX B
+        INX B       ;If carry then add 1 to higher 16 bits of answer
 
         L4:
-            DCX D
-            JMP L3
+            DCX D   ;Decrement first operand
+            JMP L3  ;Repeat loop
 
     L3E:
-        MOV D, H
+        MOV D, H        ;Higher 16 bits of Answer stored in register pair DE
         MOV E, L
 
-        MVI H, 89H
+        MVI H, 89H      ;Storing the 32 bit Answer from memory location 89000 to 8903
         MVI L, 00H
         MOV M,B
         INR L
@@ -219,26 +219,26 @@ DIV16:
 
     MVI B,00H       ;Initialize (B,C) to 0000H
     MVI C,00H       
-
+        ;Loop for repeated subtraction
     L5:
-        MOV A,L
+        MOV A,L     ;Subtracting divisor from dividend
         SUB E
         MOV L,A
         MOV A,H
         SBB D
         MOV H,A
 
-        JC L5E
+        JC L5E      ;If answer is negative then ther is carry So break the loop if carry
 
-        INX B
-        JMP L5
+        INX B       ;Increment quotient
+        JMP L5      ;Repeat Loop
 
     L5E:
         MVI H, 89H
         MVI L, 00H
-        MOV M,B
+        MOV M,B     ;Storing higher 8 bits of answer at memory location 8900
         INR L
-        MOV M,C
+        MOV M,C     ;Storing lower 8 bits of answer at memory location 8901
 
         JMP END     ;Jump to END label
 
