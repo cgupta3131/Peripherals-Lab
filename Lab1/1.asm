@@ -204,26 +204,26 @@ MUL16:
         JMP END
 
 DIV16:
-    MVI H,88H
+    MVI H,88H       ;Take first input from address 8801H
     MVI L,01H
-    MOV B,M
-    INR L
-    MOV C,M
-    INR L
-    MOV D,M
-    INR L
-    MOV E,M
-
-    MOV H,B
+    MOV B,M        ;Store the value in register B
+    INR L           ;Increment L so that new address is 8802H
+    MOV C,M     ;Store the value in register C
+    INR L       ;Increment L so that new address is 8803H
+    MOV D,M     ;Store the value in register D
+    INR L       ;Increment L so that new address is 8804H
+    MOV E,M     ;Store the value in register E
+                ;One input is in register pair (B,C) and other in (D,E)
+    MOV H,B        ;Move pair value (B,C) to (H,L)
     MOV L,C
 
-    MVI B,00H
-    MVI C,00H
+    MVI B,00H       ;Initialize (B,C) to 0000H
+    MVI C,00H       
 
     L5:
         MOV A,L
         SUB E
-        MOV L,A 
+        MOV L,A
         MOV A,H
         SBB D
         MOV H,A
@@ -240,7 +240,7 @@ DIV16:
         INR L
         MOV M,C
 
-        JMP END
+        JMP END     ;Jump to END label
 
 END:
-    RST 5
+    RST 5   ;End the program
