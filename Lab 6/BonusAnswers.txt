@@ -1,0 +1,14 @@
+Answers to bonus questions:
+
+1. Using hardware devices such as voltmeter, we can measure the voltage across the stepper motor. This can give us the speed of the mototr if we know the maximum voltage permissible and the maximum speed of the stepper motor.
+    Also, if we don't want to use hardware, we can check the amplitude A of the digital signal sending to the motor (the digital signal has amplitude range 00 to FF). This can also give us the speed of the motor given by (A/FF)*Vmax.
+
+2. The maximum rpm is achieved at the max voltage i.e. 4.75 V. The maximum rpm was observed to be around 90.
+
+3. If we do not provide any delay in the program controlling the motor, the motor will just vibrate. That is becuase the motor is not able to process the digital signals correctly, and does not do readjustment properly (by moving one step ahead and the coming back).
+    Due to this, the motor vibrates (moves to and fro one step).
+
+4.  The minimum resolution (angle) of a 2-phase motor is around 1.8 degree per step (200 steps per rotation)
+    The minimum resolution (angle) of a 5-phase motor is around 0.72 degree per step (500 steps per rotation).
+
+5. The graphs are uploaded in the folder itself in jpg format.
